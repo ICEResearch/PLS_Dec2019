@@ -102,7 +102,7 @@ while(1)
     AveragePerLocation(:,count) = 10*log10(abs(AveragePerLocation(:,count)));
     mx = max(AveragePerLocation(22:2:108,count)); mn = min(AveragePerLocation(22:2:108,count));
     av = sum(AveragePerLocation(22:2:108,count)) / 44;
-    figure(1); a = stem(AveragePerLocation(:,count)); title({'Average Carrier Strengths (linear)',...
+    figure(1); a = stem(AveragePerLocation(:,count)); title({'Average Carrier Strengths',...
         'Max:'+string(mx)+' || Min:'+string(mn)+' || Avg:'+string(av)});
     drawnow;
     pause(1);
