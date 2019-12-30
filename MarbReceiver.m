@@ -8,10 +8,10 @@ warning('off','all')   % Gets rid of the super annoying version warnings
 %%% USER INFORMATION %%%%%%
 framesPerMinute = 7500; % This will change depending on the slowest computer
 framesPerSection = 500;
-minutesOfData = 4;
+minutesOfData = 2;
 pauseTime = 0.0;
 nameOfArray = 'test';
-startTime = "20-Dec-2019 10:00:00";
+startTime = "30-Dec-2019 09:58:00";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % DurationForRadioSetup = duration('00:00:05');
@@ -44,7 +44,7 @@ temp = zeros(2048, totalFrames);
     % Wait for the setup duration specified above
 while string(datetime) ~= startTime
 end
-disp("Beginning Data Collection");
+disp("Beginning Data Collection at " + string(datetime));
 % while((datetime - RadioSetupBeginTime) < DurationForRadioSetup)
 % end
 
@@ -63,10 +63,10 @@ for timingSections = 1:numSections
 end
 DataCollectionFinishTime = datetime;
 DataCollectionRunTime = DataCollectionFinishTime - DataCollectionStartTime;
-
+disp('Program Finished. Runtime was: ' + string(DataCollectionRunTime) + '. Results are now being saved as ' + string(nameOfArray) + '.mat');
     % Save the file
 eval(sprintf("%s = temp;",string(nameOfArray)));
 i = string(nameOfArray); % name of data array
 save(string(i) + '.mat',string(i)); % Saves data array with custom name
 
-disp('Program Finished. Runtime was: ' + string(DataCollectionRunTime) + '. Results saved as ' + string(nameOfArray) + '.mat');
+disp('Finished saving the results');
