@@ -9,12 +9,13 @@
 clear; close all; clc;
 
 %%%%% USER INPUT %%%%%
-startTime = "03-Jan-2020 13:41:00";
-endTime = "03-Jan-2020 13:41:30";
+startTime = "03-Jan-2020 14:12:00";
+endTime = "03-Jan-2020 14:13:00";
 arrayName = 'testing';
+arraySize = 20e3;
 %%%%%%%%%%%%%%%%%%%%%%
-dataArray = zeros(6400, 2048); % 6400 ~= 1 minute
-
+dataArray = zeros(arraySize, 2048); % 6400 ~= 1 minute
+timeArray = NaT(1, arraySize);
 
     % Radio setup 
 plutoradiosetup();
@@ -32,7 +33,7 @@ for ignore = 1:10
 end
 
     % Wait to start until the correct time
-while string(datetime) <= startTime
+while string(datetime) < startTime
 end
 
 beep
@@ -44,7 +45,7 @@ while datetime < endTime
     timeArray(count) = datetime;
     count = count + 1;
 end
-
+disp('Finished collecting data, now saving the files.');
 beep
 
 dataName = string(arrayName) + "_data";
