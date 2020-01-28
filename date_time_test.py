@@ -6,16 +6,11 @@
 import time
 import cv2
 import os
-# Used to print the current time
-# Will be used to get correct format for setting time initially
-print(time.ctime())
-targetTime = time.ctime()
-Var_bool = False
 
 # Following code was taken from an online tutorial for recording webcam feed  #
 ###############################################################################
-filename = 'test_video_matlab.avi'  # Produces a warning when using mp4 but still works
-frames_per_second = 30
+filename = 'test_video_new.avi'  # Produces a warning when using mp4 but still works
+frames_per_second = 28
 res = '720p'
 
 # Set resolution for the video capture
@@ -61,25 +56,18 @@ def get_video_type(filename):
 cap = cv2.VideoCapture(0)
 out = cv2.VideoWriter(filename, get_video_type(filename), frames_per_second, get_dims(cap, res))
 ###############################################################################
+print(time.ctime())
+while time.ctime() != "Wed Jan 22 07:47:00 2020":
+    continue
+while cv2.waitKey(1) & (time.ctime() != "Wed Jan 22 07:47:10 2020"):
+    ret, frame = cap.read()
+    out.write(frame)
+    cv2.imshow('frame', frame)
+print("Successfully exited")
+cap.release()
+out.release()
+cv2.destroyAllWindows()
 
-while 1:
-    targetTime = time.ctime()
-    if targetTime == "Tue Jan 14 10:58:00 2020":
-        while 1:
-            targetTime = time.ctime()
-            ret, frame = cap.read()
-            out.write(frame)
-            cv2.imshow('frame', frame)
-            if cv2.waitKey(1) & (targetTime == "Tue Jan 14 10:59:00 2020"):
-                Var_bool = True
-                break
-                print("Successfully exited loop")
-                cap.release()
-                out.release()
-                cv2.destroyAllWindows()
-    if Var_bool:
-        break
-print("Exited successfully")
 
 
 
