@@ -11,10 +11,10 @@ from datetime import datetime
 fileName = 'Name_Of_Text_File'  # Enter desired name of file here for time stamps
 myFile = open(fileName + '.txt', 'w')
 
-startTime = "Mon Feb 10 15:10:00 2020"
-endTime = "Mon Feb 10 15:10:10 2020"
+startTime = "Tue Feb 11 11:22:00 2020"
+endTime = "Tue Feb 11 11:22:10 2020"
 
-filename = 'test_video_new2.avi'  # Choose either avi or mp4
+filename = 'test_video.avi'  # Choose either avi or mp4
 frames_per_second = 30  # Choose frames per second
 res = '720p'
 ######################################################################
@@ -72,7 +72,7 @@ while cv2.waitKey(1) & (time.ctime() != endTime):
     ret, frame = cap.read()
     out.write(frame)
     myFile.write(datetime.now().strftime('%H:%M:%S.%f' + '\n'))
-    cv2.imshow('frame', frame)
+    #cv2.imshow('frame', frame)
 print("Successfully Exited")
 myFile.close()
 cap.release()
