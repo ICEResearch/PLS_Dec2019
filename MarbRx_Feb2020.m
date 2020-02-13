@@ -51,4 +51,4 @@ timeName = string(arrayName) + "_time";
 eval(sprintf("%s = dataArray;",dataName));
 eval(sprintf("%s = timeArray;",timeName));
 
-save(arrayName + '.mat',dataName, timeName); % Saves data and time array with custom name into a single variable
+eval(sprintf("save %s.mat %s %s;", arrayName, dataName, timeName)); % Saves data and time array with custom name into a single variable
