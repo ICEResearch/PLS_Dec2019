@@ -9,11 +9,18 @@
 clear; close all; clc;
 
 %%%%% USER INPUT %%%%%
-startTime = "16-Jan-2020 17:10:01";
-endTime = "16-Jan-2020 17:11:31";
-arrayName = '[Lastname][RadioNumber] eg. Norman9';
-arraySize = 100e3; % Enough for four mins + extra for safety reasons
+startTime = "19-Feb-2020 13:30:00";  % Remember to include the appropriate time offset
+endTime = "19-Feb-2020 13:34:00";  
+arrayName = 'LastnameRadionumber'; % e.g., 'Jensen8'
+highTraffic = false; % all lower case - true / false
 %%%%%%%%%%%%%%%%%%%%%%
+if highTraffic == true
+    arrayName = append(arrayName,'_traffic');
+else
+    arrayName = append(arrayName,'_empty');
+end
+arraySize = 100e3; % Enough for four mins + extra for safety reasons
+
 dataArray = zeros(arraySize, 2048); % 6400 ~= 1 minute
 timeArray = NaT(1, arraySize);
 
@@ -51,4 +58,13 @@ timeName = string(arrayName) + "_time";
 eval(sprintf("%s = dataArray;",dataName));
 eval(sprintf("%s = timeArray;",timeName));
 
-eval(sprintf("save %s.mat %s %s;", arrayName, dataName, timeName)); % Saves data and time array with custom name into a single variable
+eval(sprintf("save %s.mat %s %s -v7.3;", arrayName, dataName, timeName)); % Saves data and time array with custom name into a single variable
+
+%%
+% NOTE - If you have an error while saving, adjust the variable names to
+% match the ones you used and run the following lines IN THE COMMAND
+% WINDOW:
+%
+% save Jensen8_data.mat Jensen8_data -v7.3;
+% save Jensen8_time.mat Jensen8_time -v7.3;
+%%%%%%%%%%%%%%
