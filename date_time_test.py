@@ -8,16 +8,21 @@ import os
 from datetime import datetime
 
 ######################################################################
-fileName = 'Name_Of_Text_File'  # Enter desired name of file here for time stamps
-myFile = open(fileName + '.txt', 'w')
+filename = 'LastnameRadionumber'  # e.g., Jensen8
+startTime = "Wed Feb 18 13:30:00 2020"
+endTime = "Wed Feb 18 13:34:00 2020"
+highTraffic = True   # make sure to capitalize this - True / False
+######################################################################
+if highTraffic:
+    filename = filename + '_traffic'
+else:
+    filename = filename + '_empty'
 
-startTime = "Tue Feb 11 11:22:00 2020"
-endTime = "Tue Feb 11 11:22:10 2020"
 
-filename = 'test_video.avi'  # Choose either avi or mp4
+myFile = open(filename + '.txt', 'w') # Used to save the time stamps
+filename = filename + '.avi'  # Choose either avi or mp4
 frames_per_second = 30  # Choose frames per second
 res = '720p'
-######################################################################
 
 # Set resolution for the video capture
 # Function adapted from https://kirr.co/0l6qmh
@@ -57,8 +62,6 @@ def get_video_type(filename):
       return VIDEO_TYPE[ext]
     return VIDEO_TYPE['avi']
 
-
-
 cap = cv2.VideoCapture(0)
 out = cv2.VideoWriter(filename, get_video_type(filename), frames_per_second, get_dims(cap, res))
 ###############################################################################
@@ -78,11 +81,3 @@ myFile.close()
 cap.release()
 out.release()
 cv2.destroyAllWindows()
-
-
-
-
-
-
-
-
