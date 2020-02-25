@@ -187,7 +187,7 @@ processedData(isnan(processedData)) = 0;
 data = processedData(:,any(processedData,1:2:3),:); % Removes unnecessary carriers
 
 % Save the appropriate variables into a .mat file to be used elsewhere
-save ProcessedResultsFeb2020.mat data times names idxEndOfData;
+save ../DataAnalysis/ProcessedResultsFeb2020.mat data times names idxEndOfData;
 toc;
 
 
