@@ -2,32 +2,53 @@ clear; close all;
 tic;
 
 addpath('../Data/');
-inFileNames = ["Harrison1a.mat", "Harrison1b.mat", "Farah2a.mat", ...
-    "Farah2b.mat", "Kalin3a.mat", "Kalin3b.mat", "Benj4a.mat", ...
-    "Benj4b.mat", "Amy5a.mat", "Amy5b.mat", "Nathan6a.mat", ...
-    "Nathan6b.mat", "Autumn7a.mat", "Autumn7b.mat", "Bryan9a.mat", ...
-    "Bryan9b.mat", "Spencer11a.mat", "Spencer11b.mat", ...
-    "Morteza12a.mat", "Morteza12b.mat"];
-[~, numDataFiles] = size(inFileNames);
-
 addpath('../RefSignalFolder/');
-refFileNames = ["Radio1_ref.mat", "Radio2_ref.mat", "Radio3_ref.mat", ...
-    "Radio4_ref.mat", "Radio5_ref.mat", "Radio6_ref.mat", ...
-    "Radio7_ref.mat", "Radio9_ref.mat", "Radio11_ref.mat", ...
+
+inFileNames = ["Twitchell1_empty.mat", "Twitchell1_traffic.mat", ...
+    "Jensen2_empty.mat", "Jensen2_traffic.mat", ...
+    "redd3_empty.mat", "redd3_traffic.mat", ...
+    "Cheng8_empty.mat", "Cheng8_traffic.mat", ...
+    "richmond9_empty.mat", "richmond9_traffic.mat", ...
+    "Harrison11_empty.mat", "Harrison11_traffic.mat", ...
+    "Angerbauer12_empty.mat", "Angerbauer12_traffic.mat"];
+[~, numFiles] = size(inFileNames);
+
+refFileNames = ["Radio1_ref.mat", ...
+    "Radio2_ref.mat", ...
+    "Radio3_ref.mat", ...
+    "Radio8_ref.mat", ...
+    "Radio9_ref.mat", ...
+    "Radio11_ref.mat", ...
     "Radio12_ref.mat"];
 [~, numRefFiles] = size(refFileNames);
 
-for i = 1:numDataFiles
-%     tic;
+idxEndOfData = zeros(1,numFiles);
+Nfft = 128; % Number of FFT bins
+numCarriers = Nfft;
+numFrames = 100000; %FIXME this number is hard coded. Needs to be changed if different data is read in
+dataSets = zeros(numFiles, numCarriers, numFrames);
+times = NaT(numFiles, numFrames);
+
+for i = 1:numFiles
+    %     tic;
     structContainingData = load(inFileNames(i)); % Load in raw data
     % The data is loaded in as a struct, so the desired array must be
     % extracted from the 1x1 struct
-    dataArray = struct2array(structContainingData);
-   
-    Nfft = 128; % Number of FFT bins
+    eval(sprintf('dataFromStruct = structContainingData.%s_data;', erase(inFileNames(i), ".mat")));
+    eval(sprintf('timeFromStruct = structContainingData.%s_time;', erase(inFileNames(i), ".mat")));
+    [x, y] = size(dataFromStruct);
+    if x == 2048
+        dataArray = dataFromStruct;
+    else
+        dataArray = dataFromStruct';
+    end
+    [rawData, numFrames] = size(dataArray);
+    idxEndOfData(i) = find(sum(dataArray)==0,1) - 1;
+    dataTrimmed = dataArray(:,1:idxEndOfData(i));
+    
     % Gets the processed data showing each carrier, function inputs are the
     % raw data array and the number of fft bins for the pwelch function
-    linearData = PwelchAndFFTShift(dataArray, Nfft);
+    linearData = PwelchAndFFTShift(dataTrimmed, Nfft);
     
     % The pluto radios attentuate the edge carriers, RemoveAttentuatedEdges
     % sets all of those attenuated carriers to a value of 0. The function
@@ -36,20 +57,40 @@ for i = 1:numDataFiles
     % false for even), and whether or not the data is linear or in dB (true
     % for linear, false for dB)
     noiseOnOddCarriers = true;
+    
     isolatedGoodData = RemoveAttenuatedEdges(linearData, noiseOnOddCarriers, true);
-    data(i,:,:) = isolatedGoodData;
-%     toc;
+    
+%     if i == 1 || i == 2
+%         isolatedGoodData = RemoveAttenuatedEdges(linearData, noiseOnOddCarriers, true);
+%         [numCarriers, ~] = size(isolatedGoodData);
+%         gc(:,i) = isolatedGoodData(:,1) > 0;
+%     else
+%         if sum(gc(:,1)) > sum(gc(:,2))
+%             isolatedGoodData = linearData .* gc(:,2);
+%         else
+%             isolatedGoodData = linearData .* gc(:,1);
+%         end
+%     end
+    goodDataAugmented = zeros(numCarriers, numFrames);
+    goodDataAugmented(:,1:idxEndOfData(i)) = isolatedGoodData;
+    dataSets(i,:,:) = goodDataAugmented;
+    times(i,:) = timeFromStruct;
 end
+dataSets = dataSets(:,:,1:max(idxEndOfData));
+[~, numCarriers, numFrames] = size(dataSets);
+times = times(:,1:numFrames);
+names = erase(inFileNames, ".mat");
 
 % Finds the common carriers across all the data sets and frames that are
 % good and removes any inconsistent carriers so that the data may be
 % compared appropriately across all of the data sets
-[numFiles, numCarriers, numFrames] = size(data);
-allNonZero = numFiles * numFrames;
+minIdx = min(idxEndOfData); % Number of frames that can be compared across all data sets
+allNonZero = numFiles * minIdx;
 leftCarrier = 0;
 rightCarrier = 0;
+
 for i = 1:numCarriers
-    if nnz(data(:,i,:)) == allNonZero
+    if nnz(dataSets(:,i,1:minIdx)) == allNonZero
         if leftCarrier == 0
             leftCarrier = i;
         end
@@ -69,8 +110,8 @@ if mod(sum(goodCarriers(:,1)),2) ~= 0
     end
 end
 
-data(:,1:leftCarrier-1,:) = 0;
-data(:,rightCarrier+1:numCarriers,:) = 0;
+dataSets(:,1:leftCarrier-1,:) = 0;
+dataSets(:,rightCarrier+1:numCarriers,:) = 0;
 
 % Plots one frame of the data showing which carriers were common across all
 % the data sets allowing for visual confirmation for the user
@@ -82,10 +123,14 @@ stem(10*log10(abs(maskedData)), 'MarkerFaceColor','k');
 title({'Resulting Data that is Analyzed', ...
     'Plot values are in dB for visual clarity'});
 hold off
+drawnow;
 
 % Scales the data so that the average noise power is equal to 1
-scaledData = ScaleAvgNoiseToOne(data, noiseOnOddCarriers);
-disp('Finished Base Processing of Data Sets at ' + string(datetime));
+scaledData = zeros(numFiles,numCarriers,numFrames);
+for i = 1:numFiles
+    scaledData(i,:,1:idxEndOfData(i)) = ...
+        ScaleAvgNoiseToOne(squeeze(dataSets(i,:,1:idxEndOfData(i))), noiseOnOddCarriers);
+end
 
 % Loads in the Reference Signal data, processes it, and isolates the same
 % carriers found in the measured data
@@ -114,7 +159,7 @@ scaledRefData = ScaleRefSignalToSumToOne(refData, noiseOnOddCarriers);
 
 % In the frequency domain, divides the signal carriers for each data set by
 % the reference carriers for the radio used in that data set
-signalCarriers = zeros(numDataFiles,numCarriers,numFrames);
+signalCarriers = zeros(numFiles,numCarriers,numFrames);
 refSignalCarriers = zeros(numRefFiles,numCarriers);
 signalCarriers(:,2:2:numCarriers,:) = scaledData(:,2:2:numCarriers,:);
 refSignalCarriers(:,2:2:numCarriers) = scaledRefData(:,2:2:numCarriers);
@@ -129,15 +174,20 @@ end
 
 % Normalize each carrier by dividing by the max carrier overall
 maxCarrierVal = max(max(max(removedRefSignal(:,:,:))));
-% FIXME need to ask Dr Harrison/Dr Rice about using the max carrier for
-% case a and b, or just using the overall max (not sure if it makes a
-% difference)
 
 processedData = zeros(numFiles,numCarriers,numFrames);
 processedData(:,:,:) = removedRefSignal(:,:,:) ./ maxCarrierVal;
 % All locations that are marked with a 0 became a NaN because in the above
 % code 0/0 results in NaN. So we must now set each NaN back to 0
 processedData(isnan(processedData)) = 0;
+
+% Many of the carrier indices of the 128 now contain only zeros for every
+% frame, so removing those isolates the signal carriers that we actually
+% care about
+data = processedData(:,any(processedData,1:2:3),:); % Removes unnecessary carriers
+
+% Save the appropriate variables into a .mat file to be used elsewhere
+save ProcessedResultsFeb2020.mat data times names idxEndOfData;
 toc;
 
 

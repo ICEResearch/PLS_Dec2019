@@ -1,5 +1,5 @@
 clear; close all;
-load ProcessedResultsFeb2020.mat;
+load ProcessedResults.mat;
 
 [numSets, numCarriers, numFrames] = size(data);
 numBins = 100;
@@ -25,7 +25,7 @@ for i = 1:2:numSets
     xlabel("Magnitude (dB)");
     ylabel("Count");
     index = index + 1;
-    sgtitle(extractBefore(names(i),"_"));
+    title(names(i
 end
 ylims = cell2mat(get(axes, 'Ylim'));
 xlims = cell2mat(get(axes, 'Xlim'));
@@ -35,3 +35,4 @@ set(axes, 'Ylim', yNew)
 
 xNew = [min(xlims(:,1)) max(xlims(:,2))];
 set(axes, 'Xlim', xNew)
+    
