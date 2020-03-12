@@ -26,7 +26,7 @@ load ProcessedResultsFeb2020.mat;
 
 %% Capacity Variables
 snr = 10; % Signal to noise ration (set by the user somewhat arbitrarily)
-showPlot = false; % Whether or not to plot the capacity
+showPlot = true; % Whether or not to plot the capacity
 sameAxis = false; % True -> one figure with overlaid plots.
                   % False -> multiple figures, one per radio
 
@@ -68,7 +68,6 @@ end
 data = newData;
 idxEndOfData = newIdxEndOfData;
 times = newTimes;
-
 %% Capacity
 % Each radio frame has a capacity value (bits per channel use) relating to
 % the amount of data that can be transmitted in that instance, which
@@ -89,6 +88,10 @@ for i = 1:sets
     end
 end
 
+for i = 1:length(names)
+    namesCapitalized(i) = upper(extractBefore(names(i), 2)) + extractAfter(names(i), 1);
+end
+
 %% Plotting for Capacity
 % Options for plotting the capacities. The plots are all overlaid on one
 % figure, or they are split into one figure per radio, with two subplots,
@@ -96,6 +99,7 @@ end
 capacityPlotting = capacity;
 capacityPlotting = [capacityPlotting, zeros(sets, filterSize-1)];
 if showPlot
+    load ArrayLOS.mat;
     if smoothOutput
         filter = (1 / filterSize) * ones(1, filterSize);
         for i = 1:sets
@@ -115,7 +119,15 @@ if showPlot
     else
         for i = 1:sets
             figure(i);
-            plot(capacityPlotting(i,:));
+            yyaxis left;
+            plot(capacityPlotting(i,1:idxEndOfData(i)));
+            if i == 3 || i == 4
+                % Ignore Jensen LOS plots for now
+            else
+                yyaxis right;
+                eval(sprintf("plot(ArrayLOS_%s);", namesCapitalized(i)));
+                ylim([-0.1 1.1]);
+            end
             title('Capacity: ' + names(i), 'Interpreter', 'none');
             xlabel('Index');
             ylabel('Bits');
