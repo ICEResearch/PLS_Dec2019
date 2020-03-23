@@ -9,9 +9,9 @@
 clear; close all; clc;
 
 %%%%% USER INPUT %%%%%
-startTime = "23-Mar-2020 17:00:00";  % Remember to include the appropriate time offset
-endTime = "23-Mar-2020 17:04:00";  
-arrayName = 'LastnameRadionumber'; % e.g., 'Jensen8'
+startTime = "23-Mar-2020 16:00:00";  % Remember to include the appropriate time offset
+endTime = "23-Mar-2020 16:10:00";  
+arrayName = 'FirstTest'; % e.g., 'Jensen8'
 %%%%%%%%%%%%%%%%%%%%%%
 
 arraySize = 60e3; % Enough for four mins + extra for safety reasons
@@ -56,11 +56,10 @@ while datetime <= endTime % Collects data and stores the time of each frame
     shiftedOutput = fftshift(pwelchOutput);
     signalCarriers = shiftedOutput(2:2:Nfft);
     % Capacity calculations (only using signal carriers)
-    capacity = zeros(1,frames);
     for i = 1:Nfft/2
         capacity(count) = capacity(count) + (1.0/2.0)*log2(1 + signalCarriers(i) * snr);
     end
-    plot(capacity);
+    plot(capacity(1:count));
     ylim([0 100]);
     drawnow;
 end
@@ -76,7 +75,7 @@ timeName = string(arrayName) + "_time";
 eval(sprintf("%s = dataArray;",dataName));
 eval(sprintf("%s = timeArray;",timeName));
 
-eval(sprintf("save %s.mat %s %s %s -v7.3;", arrayName, dataName, timeName, capacity)); % Saves data and time array with custom name into a single variable
+eval(sprintf("save %s.mat %s %s capacity -v7.3;", arrayName, dataName, timeName)); % Saves data and time array with custom name into a single variable
 
 %%
 % NOTE - If you have an error while saving, adjust the variable names to
