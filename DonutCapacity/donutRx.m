@@ -9,10 +9,10 @@
 clear; close all; clc;
 
 %%%%% USER INPUT %%%%%
-startTime = "03-Jan-2020 14:12:00";
-endTime = "03-Jan-2020 14:13:00";
-arrayName = 'testing';
-arraySize = 20e3;
+startTime = "16-Jan-2020 17:10:01";
+endTime = "16-Jan-2020 17:11:31";
+arrayName = 'Jensen1_noamp';
+arraySize = 30e3;
 %%%%%%%%%%%%%%%%%%%%%%
 dataArray = zeros(arraySize, 2048); % 6400 ~= 1 minute
 timeArray = NaT(1, arraySize);
@@ -36,6 +36,8 @@ end
 while string(datetime) < startTime
 end
 
+beep
+pause(1)
 beep
 disp("Starting at " + string(datetime));
 
