@@ -9,7 +9,8 @@ MARB Testing:
          93 inches above the ground, and attached the amplifier 
     - We set up 5 receivers on desks approximately 30 inches high, and one
          more receiver was set on the near stair case, ~1 foot above the others
-         (See marbRxLocations_labeled.pdf for in image, as well as distances)
+         (See marbRxLocations_labeled.pdf for in image, as well as distances.
+            Note that the Rx locations on the map are not exact.)
     - Each receiver was set up in a way that put the antenna directly in between 
         the laptop camera and the transmitter, which let us easily check for 
         line-of-sight obstructions in the video

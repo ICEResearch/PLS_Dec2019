@@ -69,9 +69,9 @@ out = cv2.VideoWriter(filename, get_video_type(filename), frames_per_second, get
 print(datetime.now().strftime('%H:%M:%S.%f'))
 print(time.ctime())
 
-while time.ctime() != startTime:
+while time.ctime() <= startTime:
     continue
-while cv2.waitKey(1) & (time.ctime() != endTime):
+while cv2.waitKey(1) & (time.ctime() <= endTime):
     ret, frame = cap.read()
     out.write(frame)
     myFile.write(datetime.now().strftime('%H:%M:%S.%f' + '\n'))
