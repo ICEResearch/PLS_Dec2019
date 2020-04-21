@@ -31,10 +31,26 @@ clear new*;
 % Capacity calculations / results
 [capPerCarrier, capPerFrame] = CalculateCapacity(data, snr);
 
+% Capacity Curve Plotting
+namesAlt = ["B_1", "B_1", "B_2", "B_2", "A_1", "A_1", "B_3", "B_3", ...
+    "A_2", "A_2", "B_4", "B_4", "Dropped", "Dropped"];
 
-for i = 1:2:sets
+for i = 1:2:sets-2
     figure();
-    subplot(2,1,1);
+    plot(capPerFrame(i,1:idxEndOfData(i)));
+    hold on
+    plot(capPerFrame(i+1,1:idxEndOfData(i+1)));
+    hold off
+    grid on
+    ylabel('Bits Per Channel Use');
+    xlabel('Frame Index');
+    title(namesAlt(i));
+    legend('Empty','Traffic');
+end
+
+% Histogram Plotting
+for i = 1:2:sets-2
+    figure();
     histEmpty = histogram(capPerFrame(i,1:idxEndOfData(i)), histBins);
     hold on
     histTraffic = histogram(capPerFrame(i+1,1:idxEndOfData(i+1)), histBins);
@@ -43,12 +59,5 @@ for i = 1:2:sets
     legend('Empty','Traffic');
     xlabel('Bits Per Channel Use');
     ylabel('Count');
-    subplot(2,1,2);
-    bar(histTraffic.Values - histEmpty.Values);
-    grid on;
-    title('Difference Between Traffic And Empty');
-    xlabel('Bits Per Channel Use');
-    ylabel('Count');
-    sgtitle(string(extractBefore(upper(extractBefore(names(i),2)) ...
-        + extractAfter(names(i),1),'_')));
+    title(namesAlt(i));
 end

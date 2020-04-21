@@ -36,7 +36,7 @@ for i = 1:eveSets
     for j = 1:eveCarriers
         for k = 1:eveFrames
             secCapacityPerCarrier(i,j,k) = ...
-                max(bobData(i,j,k) - eveData(i,j,k), 0);
+                max(bobData(j,k) - eveData(i,j,k), 0);
         end
     end
 end
@@ -45,7 +45,7 @@ secCapacityPerFrame = zeros(eveSets, eveFrames);
 
 for i = 1:eveSets
     for j = 1:eveFrames
-        secCapacityPerFrame = sum(secCapacityPerCarrier(i,:,j));
+        secCapacityPerFrame(i,j) = sum(secCapacityPerCarrier(i,:,j));
     end
 end
 
