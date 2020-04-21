@@ -5,13 +5,15 @@ close all; clear hist*; % Gets rid of figures and variables from capacity plots
 set(0,'DefaultFigureVisible','on'); % Return figure visibility
 
 %% User Controlled Variables
-bob = "Redd";
+bob = "Harrison";
 histBins = 0:50;
 
 %% The Code
 % group1 = ["Redd", "Richmond", "Angerbauer"]; % We decided to throw out Angerbauer
 group1 = ["Redd", "Richmond"];
 group2 = ["Twitchell", "Jensen", "Cheng", "Harrison"]; 
+group1alt = ["A_1", "A_2"];
+group2alt = ["B_1", "B_2", "B_3", "B_4"];
 
 dataGroup1 = zeros(length(group1), carriers, frames);
 dataGroup2 = zeros(length(group2), carriers, frames);
@@ -36,12 +38,13 @@ group2_idx = contains(names, group2, 'IgnoreCase', true);
 bob_idx = contains(names, bob, 'IgnoreCase', true);
 
 % Determines which group bob is in, and thereby which group is eve
+bobName = namesAlt(bob_idx); bobName = bobName(1);
 if any(bob_idx & group1_idx)
     eve_idx = group2_idx;
-    eveNames = group2;
+    eveNames = group2alt;
 elseif any(bob_idx & group2_idx)
     eve_idx = group1_idx;
-    eveNames = group1;
+    eveNames = group1alt;
 else
     disp('ERROR: specified Bob was not found in either group');
     return
@@ -118,8 +121,9 @@ for i = 1:2:sum(eve_idx)
     hold on
     plot(xDuration, secrecyCapacity(i+1,:));
     hold off
+    grid on;
     legend('Empty','Traffic');
-    title('Bob is ' + bob + ' || Eve is ' + eveNames(idxForPlot));
+    title('Bob is ' + bobName + ' || Eve is ' + eveNames(idxForPlot));
     idxForPlot = idxForPlot + 1;
 end
 
@@ -127,7 +131,6 @@ end
 idxForPlot = 1;
 for i = 1:2:sum(eve_idx)
     figure();
-    subplot(2,1,1);
     histEmpty = histogram(secrecyCapacity(i,:), histBins);
     hold on
     histTraffic = histogram(secrecyCapacity(i+1,:), histBins);
@@ -136,13 +139,24 @@ for i = 1:2:sum(eve_idx)
     legend('Empty','Traffic');
     xlabel('Bits Per Channel Use');
     ylabel('Count');
-    subplot(2,1,2);
-    bar(histTraffic.Values - histEmpty.Values);
-    grid on;
-    title('Difference Between Traffic And Empty');
-    xlabel('Bits Per Channel Use');
-    ylabel('Count');
-    sgtitle('Bob is ' + bob + ' || Eve is ' + eveNames(idxForPlot));
+    title('Bob is ' + bobName + ' || Eve is ' + eveNames(idxForPlot));
     idxForPlot = idxForPlot + 1;
 end
 
+
+%% This can stay commented out, it was only used to save data that Dr Rice
+%% wanted access to
+
+% for i = 1:sum(eve_idx)
+%     if mod(i,2) % Odd numbers (Empty Case)
+%         c = 'empty';
+%     else % Even Numbers (Traffic Case)
+%         c = 'traffic';
+%     end
+%     eval(['secrecyCapacity_' char(lower(extractBefore(bobName, '_'))) char(extractAfter(bobName, '_')) ...
+%         '_' char(lower(extractBefore(eveNames(ceil(i/2)), '_'))) char(extractAfter(eveNames(ceil(i/2)), '_')) ...
+%         '_' c ' = secrecyCapacity(i,:);']);
+% end
+% timeForXAxis = bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2));
+% save(['SecrecyCapacity_' char(lower(extractBefore(bobName, '_'))) char(extractAfter(bobName, '_')) '.mat'], ...
+%     'secrecyCapacity_*', 'timeForXAxis');
