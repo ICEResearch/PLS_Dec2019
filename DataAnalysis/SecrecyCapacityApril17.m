@@ -114,14 +114,16 @@ end
         
 % Secrecy Curve Plotting
 idxForPlot = 1;
-xDuration = bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2));
+xAxis_time = seconds(flip(bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2))));
 for i = 1:2:sum(eve_idx)
     figure();
-    plot(xDuration, secrecyCapacity(i,:));
+    plot(xAxis_time, secrecyCapacity(i,:));
     hold on
-    plot(xDuration, secrecyCapacity(i+1,:));
+    plot(xAxis_time, secrecyCapacity(i+1,:));
     hold off
     grid on;
+    xlabel('Time (s)');
+    ylabel('Bits');
     legend('Empty','Traffic');
     title('Bob is ' + bobName + ' || Eve is ' + eveNames(idxForPlot));
     idxForPlot = idxForPlot + 1;
