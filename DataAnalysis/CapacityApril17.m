@@ -33,23 +33,28 @@ clear new*;
 
 % Capacity Curve Plotting
 namesAlt = ["B_1", "B_1", "B_2", "B_2", "A_1", "A_1", "B_3", "B_3", ...
-    "A_2", "A_2", "B_4", "B_4", "Dropped", "Dropped"];
+    "A_2", "A_2", "B_4", "B_4", "Dropped", "Dropped"]; % Dropped corresponds 
+    % to Angerbauer, we dropped his data from the final paper
 
-for i = 1:2:sets-2
+for i = 1:sets
+    xAxisTimes(i,:) = seconds(times(i,idxEndOfData(i)) - times(i,:));
+end
+
+for i = 1:2:sets-2 % the '-2' corresponds to dropping Angerbauer's data
     figure();
-    plot(capPerFrame(i,1:idxEndOfData(i)));
+    plot(flip(xAxisTimes(i,1:idxEndOfData(i))), capPerFrame(i,1:idxEndOfData(i)));
     hold on
-    plot(capPerFrame(i+1,1:idxEndOfData(i+1)));
+    plot(flip(xAxisTimes(i+1,1:idxEndOfData(i+1))), capPerFrame(i+1,1:idxEndOfData(i+1)));
     hold off
     grid on
     ylabel('Bits Per Channel Use');
-    xlabel('Frame Index');
+    xlabel('Time (s)c');
     title(namesAlt(i));
     legend('Empty','Traffic');
 end
 
 % Histogram Plotting
-for i = 1:2:sets-2
+for i = 1:2:sets-2 % the '-2' corresponds to dropping Angerbauer's data
     figure();
     histEmpty = histogram(capPerFrame(i,1:idxEndOfData(i)), histBins);
     hold on
