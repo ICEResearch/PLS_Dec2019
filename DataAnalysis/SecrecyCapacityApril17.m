@@ -52,9 +52,11 @@ for bobSelect = 1:length(group1)
     end
     
     % Separates bob and eve's data into their own variable for easier use
+    bobData = data(bob_idx,:,:);
     bobDurations = durations(bob_idx,:);
     bobCapPerCarrier_temp = capPerCarrier(bob_idx,:,:);
     bobStartEnd = idxStartEnd(bob_idx,:);
+    eveData = data(eve_idx,:,:);
     eveDurations = durations(eve_idx,:);
     eveCapPerCarrier_temp = capPerCarrier(eve_idx,:,:);
     eveStartEnd = idxStartEnd(eve_idx,:);
@@ -78,11 +80,16 @@ for bobSelect = 1:length(group1)
     
     % Create the final array of Bob's capacities
     bobCapPerCarrier = zeros(sum(bob_idx), carriers, min(bobLengths));
+    eval(['closestIdxBobData_' char(group1alt(bobSelect)) ' = bobCapPerCarrier;']);
     for i = 1:min(bobLengths)
         bobCapPerCarrier(idxBobMin, :, i) = ...
             bobCapPerCarrier_temp(idxBobMin, :, bobStartEnd(idxBobMin, 1) - 1 + i);
         bobCapPerCarrier(~idxBobMin, :, i) = ...
             bobCapPerCarrier_temp(~idxBobMin, :, bobClosestIdx(i));
+        eval(['closestIdxBobData_' char(group1alt(bobSelect)) '(idxBobMin, :, i)' ...
+            ' = bobData(idxBobMin, :, bobStartEnd(idxBobMin, 1) - 1 + i);']);
+        eval(['closestIdxBobData_' char(group1alt(bobSelect)) '(~idxBobMin, :, i)' ...
+            ' = bobData(~idxBobMin, :, bobClosestIdx(i));']);
     end
     
     % Identify the indices for all of Eve's cases
@@ -94,10 +101,13 @@ for bobSelect = 1:length(group1)
     
     % Create the final array of Eve's capacities
     eveCapPerCarrier = zeros(sum(eve_idx), carriers, min(bobLengths));
+    eval(['closestIdxEveData_' char(group1alt(bobSelect)) ' = eveCapPerCarrier;']);
     for i = 1:sum(eve_idx)
         for j = 1:min(bobLengths)
             eveCapPerCarrier(i,:,j) = ...
                 eveCapPerCarrier_temp(i,:, eveClosestIdx(i,j));
+            eval(['closestIdxEveData_' char(group1alt(bobSelect)) '(i, :, j)' ...
+            ' = eveData(i, :, eveClosestIdx(j));']);
         end
     end
     
@@ -146,6 +156,7 @@ for bobSelect = 1:length(group1)
         title('Bob is ' + bobName + ' || Eve is ' + eveNames(idxForPlot));
         idxForPlot = idxForPlot + 1;
     end
+    
 end
 
 
