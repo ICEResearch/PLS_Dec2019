@@ -4,7 +4,7 @@
 
 %% Actual File
 close all; clear;
-SecrecyCapacityApril17; % Run secrecy capacity file to get necessary variables
+GaussianSecrecyCapacity; % Run secrecy capacity file to get necessary variables
 groupBob = group1alt; % rename 
 groupEve = group2alt; % rename
 %%
@@ -39,8 +39,8 @@ for i = 1:10
         dataGroup2(i,:,:) = temp2;
     end
     for j = 1:numSNRs
-        carriersGroup1(i,j,:) = CarriersFromThreshold(temp1, snrArray(j), thresholdLinear);
-        carriersGroup2(i,j,:) = CarriersFromThreshold(temp2, snrArray(j), thresholdLinear);
+        carriersGroup1(i,j,:) = CapacityFromThreshold(temp1, snrArray(j), thresholdLinear);
+        carriersGroup2(i,j,:) = CapacityFromThreshold(temp2, snrArray(j), thresholdLinear);
     end
         
 end
@@ -58,14 +58,14 @@ snrArray = 10*log10(snrArray);
 
 for i = 1:10
     if mod(i,2)
-        figure(5); hold on
+        figure(1); hold on
         plot(snrArray, group1Sums(i,:));
-        figure(6); hold on
+        figure(2); hold on
         plot(snrArray, group2Sums(i,:));
     else 
-        figure(7); hold on
+        figure(3); hold on
         plot(snrArray, group1Sums(i,:));
-        figure(8); hold on
+        figure(4); hold on
         plot(snrArray, group2Sums(i,:));
     end
 end
@@ -81,4 +81,27 @@ plot(snrArray(group2AtMax(1,:)), group2Sums(1, group2AtMax(1,:)), 'xk');
 figure(4); grid on; legend(group2vars, 'Location', 'southeast'); title('Bob A2 - Heavy');
 ylabel('Number of frames with 42 carriers above the threshold'); xlabel('SNR (linear)');
 plot(snrArray(group2AtMax(2,:)), group2Sums(2, group2AtMax(2,:)), 'xk');
+
+
+
+
+function [carriersAboveThreshold] = CapacityFromThreshold(data,snr,threshold)
+% Finds the number of carriers above the specified threshold
+
+[carriers, frames] = size(data);
+carriersAboveThreshold = zeros(1, frames);
+for frame = 1:frames
+    numCarriers = 0;
+    if isnan(data(1, frame))
+        numCarriers = nan;
+    else
+        for carrier = 1:carriers
+            if data(carrier, frame) * snr >= threshold
+                numCarriers = numCarriers + 1;
+            end
+        end
+    end
+    carriersAboveThreshold(frame) = numCarriers;
+end
+end
             

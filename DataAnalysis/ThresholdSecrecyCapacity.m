@@ -3,7 +3,7 @@
 
 %% Actual File
 close all; clear;
-SecrecyCapacityApril17; % Run secrecy capacity file to get necessary variables
+GaussianSecrecyCapacity; % Run secrecy capacity file to get necessary variables
 groupBob = group1alt; % rename 
 groupEve = group2alt; % rename
 %%
