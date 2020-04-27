@@ -1,6 +1,6 @@
 clear; close all;
 set(0,'DefaultFigureVisible','off'); % Supress figure visibility
-CapacityApril17; % Run Capacity File
+GaussianCapacity; % Run Capacity File
 close all; clear hist* xAxis*; % Gets rid of figures and variables from capacity plots
 set(0,'DefaultFigureVisible','on'); % Return figure visibility
 
