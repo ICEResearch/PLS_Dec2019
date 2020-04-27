@@ -62,13 +62,13 @@ for i = 1:8
         plot(snrArray, group2Avgs(i,:));
     end
 end
-figure(1); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A1 - Empty');
+figure(1); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A1 - Sparse');
 ylabel('Avg Secrecy Capacity (Bits)'); xlabel('SNR');
-figure(2); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A1 - Traffic');
+figure(2); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A1 - Heavy');
 ylabel('Avg Secrecy Capacity (Bits)'); xlabel('SNR');
-figure(3); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A2 - Empty');
+figure(3); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A2 - Sparse');
 ylabel('Avg Secrecy Capacity (Bits)'); xlabel('SNR');
-figure(4); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A2 - Traffic');
+figure(4); grid on; legend(groupEveVars, 'Location', 'southeast'); title('Bob A2 - Heavy');
 ylabel('Avg Secrecy Capacity (Bits)'); xlabel('SNR');
 
 function [secCap] = SecCapFromThreshold(bob,eve,snr,threshold)
