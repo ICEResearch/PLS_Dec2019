@@ -8,8 +8,7 @@ SecrecyCapacityApril17; % Run secrecy capacity file to get necessary variables
 groupBob = group1alt; % rename 
 groupEve = group2alt; % rename
 %%
-% close all; 
-clearvars -except groupBob groupEve closestIdx*; % Isolate the only needed variables
+close all; clearvars -except groupBob groupEve closestIdx*; % Isolate the only needed variables
 groupBobVars = lower(extractBefore(groupBob, '_'))+extractAfter(groupBob, '_');
 groupEveVars = lower(extractBefore(groupEve, '_'))+extractAfter(groupEve, '_');
 group1vars = [groupBobVars(1) groupEveVars];
