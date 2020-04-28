@@ -1,6 +1,6 @@
 # DONUT CAPACITY TESTS:
-*Purpose:* Determine effect of distance on capacity.
-*Location:* Garden Terrace in the Wilkenson Center.
+**Purpose:** Determine effect of distance on capacity.    
+**Location:** Garden Terrace in the Wilkenson Center.  
 
 ## Procedure:
 - We set up a Tx in the center of the room and cleared out the tables/chairs

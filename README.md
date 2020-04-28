@@ -1,6 +1,6 @@
 # MARB Testing:
-*Purpose*: Determine effects of traffic on secrecy capacity.
-*Location*: MARB, main floor
+**Purpose**: Determine effects of traffic on secrecy capacity.  
+**Location**: MARB, main floor   
 
 ## Procedure:
 - A transmitter (ADALM-Pluto) was set up on the southern wall of the eastern 

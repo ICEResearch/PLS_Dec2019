@@ -1,7 +1,7 @@
 # MARCH CONTROLLED TESTS:
-*Purpose:* Determine how objects blocking line-of-sight at different proximities
-to the Tx/Rx affects capacity
-*Location:* Parking lot West of the LaVell Edwards Stadium 
+**Purpose:** Determine how objects blocking line-of-sight at different proximities
+to the Tx/Rx affects capacity   
+**Location:** Parking lot West of the LaVell Edwards Stadium    
 
 ## Procedure:
 - We set up a Tx in an empty parking lot, connected to an amplifier
