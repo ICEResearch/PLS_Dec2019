@@ -90,7 +90,12 @@ for bobSelect = 1:length(group1)
             ' = bobData(idxBobMin, :, bobStartEnd(idxBobMin, 1) - 1 + i);']);
         eval(['closestIdxBobData_' char(group1alt(bobSelect)) '(~idxBobMin, :, i)' ...
             ' = bobData(~idxBobMin, :, bobClosestIdx(i));']);
+        eval(['durations_' char(group1alt(bobSelect)) '(1, i)' ...
+            ' = bobDurations(idxBobMin, bobStartEnd(idxBobMin, 1) - 1 + i);']);
     end
+    
+    eval(['time_' char(group1alt(bobSelect)) ...
+        ' = fliplr(durations_' char(group1alt(bobSelect)) ');']);
     
     % Identify the indices for all of Eve's cases
     eveClosestIdx = zeros(sum(eve_idx), min(bobLengths));
@@ -107,7 +112,7 @@ for bobSelect = 1:length(group1)
             eveCapPerCarrier(i,:,j) = ...
                 eveCapPerCarrier_temp(i,:, eveClosestIdx(i,j));
             eval(['closestIdxEveData_' char(group1alt(bobSelect)) '(i, :, j)' ...
-            ' = eveData(i, :, eveClosestIdx(j));']);
+                ' = eveData(i, :, eveClosestIdx(j));']);
         end
     end
     
