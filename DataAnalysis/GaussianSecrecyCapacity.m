@@ -13,7 +13,8 @@ histBins = 0:50;
 group1 = ["Redd", "Richmond"];
 group2 = ["Twitchell", "Jensen", "Cheng", "Harrison"];
 group1alt = ["A_1", "A_2"];
-group2alt = ["B_1", "B_2", "B_3", "B_4"];
+group2alt = ["Case 1", "Case 2", "Case 4", "Case 6"];
+plotNames_group1 = ["Case 3", "Case 5"];
 
 % From the stored datetimes calculates the durations of each data run
 for i = 1:sets
@@ -29,6 +30,10 @@ for i = 1:sets
 end
 % Stores the starting and ending indices for each data run for later use
 idxStartEnd = [idxOfMinDuration; idxEndOfData]';
+
+plotIdx = 1;
+axesIdx = 1;
+
 
 for bobSelect = 1:length(group1)
     bob = group1(bobSelect);
@@ -131,39 +136,77 @@ for bobSelect = 1:length(group1)
     
     % Secrecy Curve Plotting
     idxForPlot = 1;
+    plotIdx = (bobSelect-1)*4 + 1;
+    axesIdx = (bobSelect-1)*8 + 1;
     xAxis_time = seconds(flip(bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2))));
     for i = 1:2:sum(eve_idx)
-        figure();
+        figure(1);
+        subplot(4,2,plotIdx)
+        hold on 
         plot(xAxis_time, secrecyCapacity(i,:));
-        hold on
+        axes(axesIdx) = gca;
         plot(xAxis_time, secrecyCapacity(i+1,:));
-        hold off
+        axes(axesIdx+1) = gca;
         grid on;
         xlabel('Time (s)');
         ylabel('Bits');
-        legend('Empty','Traffic');
-        title('Bob is ' + bobName + ' || Eve is ' + eveNames(idxForPlot));
+        legend('Sparse','Heavy');
+        title('Bob is ' + plotNames_group1(bobSelect) + ' || Eve is ' + eveNames(idxForPlot));
+        hold off
         idxForPlot = idxForPlot + 1;
+        plotIdx = plotIdx + 1;
+        axesIdx = axesIdx + 2;
     end
     
     % Histogram Plotting
     idxForPlot = 1;
+    plotIdx = (bobSelect-1)*4 + 1;
+    axesIdx = (bobSelect-1)*8 + 1;
     for i = 1:2:sum(eve_idx)
-        figure();
-        histEmpty = histogram(secrecyCapacity(i,:), histBins);
-        hold on
-        histTraffic = histogram(secrecyCapacity(i+1,:), histBins);
-        hold off
+        figure(2);
+        subplot(4,2, plotIdx)
+        hold on 
+        histEmpty = histogram(secrecyCapacity(i,:), histBins, 'Normalization', 'probability');
+        histAxes(axesIdx) = gca;
+        histTraffic = histogram(secrecyCapacity(i+1,:), histBins, 'Normalization', 'probability');
+        histAxes(axesIdx + 1) = gca;
         grid on;
-        legend('Empty','Traffic');
+        legend('Sparse','Heavy');
         xlabel('Bits Per Channel Use');
         ylabel('Count');
-        title('Bob is ' + bobName + ' || Eve is ' + eveNames(idxForPlot));
+        title('Bob is ' + plotNames_group1(bobSelect) + ' || Eve is ' + eveNames(idxForPlot));
+        hold off
         idxForPlot = idxForPlot + 1;
+        plotIdx = plotIdx + 1;
+        axesIdx = axesIdx + 2;
     end
     
 end
 
+
+% Set Y/X Limits on all plots to the same values
+ylims = cell2mat(get(axes, 'Ylim'));
+xlims = cell2mat(get(axes, 'Xlim'));
+
+yLimsNew = [min(ylims(:,1)) max(ylims(:,2))];
+set(axes, 'Ylim', yLimsNew);
+
+xLimsNew = [min(xlims(:,1)) max(xlims(:,2))];
+set(axes, 'Xlim', xLimsNew);
+
+set(axes, 'FontSize', 14);
+
+% Set Y/X Limits on all plots to the same values
+ylims = cell2mat(get(histAxes, 'Ylim'));
+xlims = cell2mat(get(histAxes, 'Xlim'));
+
+yLimsNew = [min(ylims(:,1)) max(ylims(:,2))];
+set(histAxes, 'Ylim', yLimsNew);
+
+xLimsNew = [min(xlims(:,1)) max(xlims(:,2))];
+set(histAxes, 'Xlim', xLimsNew);
+
+set(histAxes, 'FontSize', 14);
 
 %% This can stay commented out, it was only used to save data that Dr Rice
 %% wanted access to
