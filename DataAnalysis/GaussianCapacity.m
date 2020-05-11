@@ -1,4 +1,5 @@
 clear; close all;
+% addpath ../Data
 load ProcessedResultsFeb2020.mat;
 
 %% User Controlled Variables (Le Magicke Numerals)
@@ -35,34 +36,89 @@ clear new*;
 namesAlt = ["B_1", "B_1", "B_2", "B_2", "A_1", "A_1", "B_3", "B_3", ...
     "A_2", "A_2", "B_4", "B_4", "Dropped", "Dropped"]; % Dropped corresponds 
     % to Angerbauer, we dropped his data from the final paper
+namesAlt = ["Case 1", "Case 1", "Case 2", "Case 2", "Case 3", "Case 3", ...
+            "Case 4", "Case 4", "Case 5", "Case 5", "Case 6", "Case 6"];
 
 for i = 1:sets
     xAxisTimes(i,:) = seconds(times(i,idxEndOfData(i)) - times(i,:));
 end
 
+%%
+plotIdx = 1;
 for i = 1:2:sets-2 % the '-2' corresponds to dropping Angerbauer's data
-    figure();
-    plot(flip(xAxisTimes(i,1:idxEndOfData(i))), capPerFrame(i,1:idxEndOfData(i)));
+    figure(1);
+    subplot(2, 3, plotIdx);
     hold on
+    plot(flip(xAxisTimes(i,1:idxEndOfData(i))), capPerFrame(i,1:idxEndOfData(i)));
+    axes(i) = gca;
     plot(flip(xAxisTimes(i+1,1:idxEndOfData(i+1))), capPerFrame(i+1,1:idxEndOfData(i+1)));
+    axes(i+1) = gca;
     hold off
     grid on
-    ylabel('Bits Per Channel Use');
-    xlabel('Time (s)c');
+    if (plotIdx == 1 || plotIdx ==4)
+        ylabel('Bits Per Channel Use');
+    end
+    if (plotIdx > 3)
+        xlabel('Time (s)');
+    end
+    
+    if (plotIdx == 3)
+        legend('Sparse','Heavy');
+    end
     title(namesAlt(i));
-    legend('Empty','Traffic');
+    
+    plotIdx = plotIdx + 1;
 end
 
+%%
 % Histogram Plotting
+plotIdx = 1;
 for i = 1:2:sets-2 % the '-2' corresponds to dropping Angerbauer's data
-    figure();
-    histEmpty = histogram(capPerFrame(i,1:idxEndOfData(i)), histBins);
-    hold on
-    histTraffic = histogram(capPerFrame(i+1,1:idxEndOfData(i+1)), histBins);
+    figure(2);
+    subplot(2, 3, plotIdx)
+    hold on 
+    histEmpty = histogram(capPerFrame(i,1:idxEndOfData(i)), histBins, 'Normalization', 'probability');
+    hAxes(i) = gca;
+    histTraffic = histogram(capPerFrame(i+1,1:idxEndOfData(i+1)), histBins, 'Normalization', 'probability');
+    hAxes(i+1) = gca;
     hold off
     grid on;
-    legend('Empty','Traffic');
-    xlabel('Bits Per Channel Use');
-    ylabel('Count');
+    if plotIdx == 3   
+        legend('Sparse','Heavy');
+    end
+    if plotIdx > 3
+        xlabel('Bits Per Channel Use');
+    end
+    if (plotIdx == 1 || plotIdx == 4)
+        ylabel('Frequency');
+    end
     title(namesAlt(i));
+    
+    plotIdx = plotIdx + 1;
 end
+
+
+%%
+% Set Y/X Limits on all plots to the same values
+ylims = cell2mat(get(axes, 'Ylim'));
+xlims = cell2mat(get(axes, 'Xlim'));
+
+yLimsNew = [min(ylims(:,1)) max(ylims(:,2))];
+set(axes, 'Ylim', yLimsNew);
+
+xLimsNew = [min(xlims(:,1)) max(xlims(:,2))];
+set(axes, 'Xlim', xLimsNew);
+
+set(axes, 'FontSize', 14);
+
+% Repeat for histograms
+ylims = cell2mat(get(hAxes, 'Ylim'));
+xlims = cell2mat(get(hAxes, 'Xlim'));
+
+yLimsNew = [min(ylims(:,1)) max(ylims(:,2))];
+set(hAxes, 'Ylim', yLimsNew);
+
+xLimsNew = [min(xlims(:,1)) max(xlims(:,2))];
+set(hAxes, 'Xlim', xLimsNew);
+
+set(hAxes, 'FontSize', 14);
