@@ -1,5 +1,5 @@
 clear; close all;
-% addpath ../Data
+addpath ../Data
 load ProcessedResultsFeb2020.mat;
 
 %% User Controlled Variables (Le Magicke Numerals)

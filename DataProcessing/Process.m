@@ -3,6 +3,8 @@ tic;
 
 addpath('../Data/');
 addpath('../RefSignalFolder/');
+addpath('../Data/RawData');
+addpath('../Data/RawData/matFiles');
 
 inFileNames = ["Twitchell1_empty.mat", "Twitchell1_traffic.mat", ...
     "Jensen2_empty.mat", "Jensen2_traffic.mat", ...
@@ -28,8 +30,10 @@ numCarriers = Nfft;
 numFrames = 100000; %FIXME this number is hard coded. Needs to be changed if different data is read in
 dataSets = zeros(numFiles, numCarriers, numFrames);
 times = NaT(numFiles, numFrames);
+carriersToTrimEachSide = 11; % On EACH side, so 2*this total
 
 for i = 1:numFiles
+    disp('Working on file ' + string(i) + ' at time ' + string(datetime));
     %     tic;
     structContainingData = load(inFileNames(i)); % Load in raw data
     % The data is loaded in as a struct, so the desired array must be
@@ -58,7 +62,7 @@ for i = 1:numFiles
     % for linear, false for dB)
     noiseOnOddCarriers = true;
     
-    isolatedGoodData = RemoveAttenuatedEdges(linearData, noiseOnOddCarriers, true);
+    isolatedGoodData = RemoveAttenuatedEdgeCarriersEvenly(linearData, noiseOnOddCarriers, carriersToTrimEachSide);
     
 %     if i == 1 || i == 2
 %         isolatedGoodData = RemoveAttenuatedEdges(linearData, noiseOnOddCarriers, true);
