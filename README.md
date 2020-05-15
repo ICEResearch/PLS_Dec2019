@@ -2,6 +2,7 @@
 **Purpose**: Determine effects of traffic on secrecy capacity.  
 **Location**: MARB, main floor   
 (Note that this branch was made to adjust the way the carriers were used; previously, we used 42 of the 64, but now we plan on the center 32)
+
 ## Procedure:
 - A transmitter (ADALM-Pluto) was set up on the southern wall of the eastern 
 doors on the ground floor of the MARB, approximately 93 inches off the ground
