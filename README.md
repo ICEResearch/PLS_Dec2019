@@ -1,35 +1,21 @@
-# MARB Testing:
-**Purpose**: Determine effects of traffic on secrecy capacity.  
-**Location**: MARB, main floor   
-(Note that this branch was made to adjust the way the carriers were used; previously, we used 42 of the 64, but now we plan on the center 32)
+# New Carriers Branch
 
-## Procedure:
-- A transmitter (ADALM-Pluto) was set up on the southern wall of the eastern 
-doors on the ground floor of the MARB, approximately 93 inches off the ground
-- An amplifier was attached to the transmitter (will check type when campus opens)
-- 6 Receivers were set up on desks approximately 30 inches high at varying 
-distances from the transmitter. See marbRxLocations_labeled.pdf for image
-(Note that 2 more were set up on stairs, but the data was unused)
-- A laptop for each receiver was set up in a way that put the receiving antenna
-directly between the laptop camera and the transmitter, which allowed for clear
-identification of line-of-sigh obstructions in the recorded video
-- Each laptop ran date_time_test.py (which generated a .avi video file and a 
-.txt file with timestamps for each video frame) and MarbRx_Feb2020.m (which recorded
-the received signal, and timestamps, in a .mat file)
-- Data was recorded two times: the first when the halls were mostly empty, 
-the second during a class break when there was more traffic. Both scenarios
-lasted for four minutes.
-   
-## Processing:
-(IN PROGRESS
-       
-## Data:
-- Each .mat, .avi, and .txt file can be found on Box at 
-https://byu.app.box.com/folder/103939543408
-  
-## Other:
-- Two other mini-experiments (Donut Capacity: Distance vs Capacity, and
- MarchControlledTests: Obstacle proximity vs capacity) were also done
-during this experiment, and are located in their respective folders
-with ReadMe.md files explaining them more thoroughly.
+## Explanation
+As you may already know, when we broadcast our 64-subcarrier signal, some of
+the edge carriers are attenuated by the hardware. We normally end up throwing
+these out. This time, as we were looking at the way we determined which carriers
+to throw out, we realized that it required full information of the channel 
+characteristics (it was done by averaging all the frames and looking at the 
+noise floor to see when things got attenuated).
 
+Dr. Harrison preferred that we just take the center X carriers, as that would 
+be more like what we would actually to do were we to not have measured the
+whole environment. 
+
+As such, this branch was made to modify the process.m file accordingly.
+
+Interestingly enough, in the end, the old method ended up taking the center 
+42 carriers, anyway. 
+
+In the end, we copied over the working changes to the master branch. This 
+ReadMe will likely never see the light of day...
