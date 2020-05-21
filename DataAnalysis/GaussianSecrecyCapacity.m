@@ -12,9 +12,11 @@ histBins = 0:50;
 % Angerbauer's Data
 group1 = ["Redd", "Richmond"];
 group2 = ["Twitchell", "Jensen", "Cheng", "Harrison"];
-group1alt = ["A_1", "A_2"];
-group2alt = ["Case 1", "Case 2", "Case 4", "Case 6"];
-plotNames_group1 = ["Case 3", "Case 5"];
+group1alt = ["B2", "B1"];
+group2alt = ["E1", "E4", "E2", "E3"];
+plotNames_group1 = ["B2", "B1"];
+
+xAxis_time = zeros(2, 22000);
 
 % From the stored datetimes calculates the durations of each data run
 for i = 1:sets
@@ -138,25 +140,33 @@ for bobSelect = 1:length(group1)
     idxForPlot = 1;
     plotIdx = (bobSelect-1)*4 + 1;
     axesIdx = (bobSelect-1)*8 + 1;
-    xAxis_time = seconds(flip(bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2))));
+    
+    tempTime = seconds(flip(bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2))));
+    
     for i = 1:2:sum(eve_idx)
         figure(1);
         subplot(4,2,plotIdx)
         hold on 
-        plot(xAxis_time, secrecyCapacity(i,:));
+        plot(tempTime, secrecyCapacity(i,:));
         axes(axesIdx) = gca;
-        plot(xAxis_time, secrecyCapacity(i+1,:));
+        plot(tempTime, secrecyCapacity(i+1,:));
         axes(axesIdx+1) = gca;
         grid on;
         xlabel('Time (s)');
         ylabel('Bits');
         legend('Sparse','Heavy');
-        title('Bob is ' + plotNames_group1(bobSelect) + ' || Eve is ' + eveNames(idxForPlot));
+        title(plotNames_group1(bobSelect) + ' || ' + eveNames(idxForPlot));
         hold off
         idxForPlot = idxForPlot + 1;
         plotIdx = plotIdx + 1;
         axesIdx = axesIdx + 2;
     end
+    
+    if length(tempTime) ~= length(xAxis_time)
+        diff = length(xAxis_time) - length(tempTime);
+        tempTime = [tempTime zeros(1, diff)];
+    end
+    xAxis_time(bobSelect, :) = tempTime;
     
     % Histogram Plotting
     idxForPlot = 1;
@@ -174,12 +184,28 @@ for bobSelect = 1:length(group1)
         legend('Sparse','Heavy');
         xlabel('Bits Per Channel Use');
         ylabel('Count');
-        title('Bob is ' + plotNames_group1(bobSelect) + ' || Eve is ' + eveNames(idxForPlot));
+        title(plotNames_group1(bobSelect) + ' || ' + eveNames(idxForPlot));
         hold off
         idxForPlot = idxForPlot + 1;
         plotIdx = plotIdx + 1;
         axesIdx = axesIdx + 2;
     end
+    
+%     % This can stay commented out, it was only used to save data that Dr Rice
+%     %   wanted access to
+%     for i = 1:sum(eve_idx)
+%         if mod(i,2) % Odd numbers (Empty Case)
+%             c = 'empty';
+%         else % Even Numbers (Traffic Case)
+%             c = 'traffic';
+%         end
+%         eval(['secrecyCapacity_' char(lower(bobName)) ...
+%             '_' char(lower(eveNames(ceil(i/2)))) ...
+%             '_' c ' = secrecyCapacity(i,:);']);
+%     end
+%     timeForXAxis = bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2));
+%     save(['SecrecyCapacity_' char(lower(bobName)) '.mat'], ...
+%         'secrecyCapacity_*', 'timeForXAxis');
     
 end
 
@@ -208,19 +234,49 @@ set(histAxes, 'Xlim', xLimsNew);
 
 set(histAxes, 'FontSize', 14);
 
-%% This can stay commented out, it was only used to save data that Dr Rice
-%% wanted access to
+%% Determine the means + standard deviations
+% stored in rows of (Mean, St. Dev)
 
-% for i = 1:sum(eve_idx)
-%     if mod(i,2) % Odd numbers (Empty Case)
-%         c = 'empty';
-%     else % Even Numbers (Traffic Case)
-%         c = 'traffic';
-%     end
-%     eval(['secrecyCapacity_' char(lower(extractBefore(bobName, '_'))) char(extractAfter(bobName, '_')) ...
-%         '_' char(lower(extractBefore(eveNames(ceil(i/2)), '_'))) char(extractAfter(eveNames(ceil(i/2)), '_')) ...
-%         '_' c ' = secrecyCapacity(i,:);']);
-% end
-% timeForXAxis = bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2));
-% save(['SecrecyCapacity_' char(lower(extractBefore(bobName, '_'))) char(extractAfter(bobName, '_')) '.mat'], ...
-%     'secrecyCapacity_*', 'timeForXAxis');
+for i = 1:2:16
+    stats(i, 1) = mean(histAxes(i).Children(1).Data);
+    stats(i, 2) = std(histAxes(i).Children(1).Data);
+
+    stats(i+1, 1) = mean(histAxes(i).Children(2).Data);
+    stats(i+1, 2) = std(histAxes(i).Children(2).Data);
+end
+
+%% Save the data by pulling it off the plots
+    % Start with B2, storing time and then heavy/sparse for each Eve
+SecrecyCapacity_B2(1,:) = axes(1).Children(1).XData; % Time data for B2  
+
+for i = 1:2:8
+    SecrecyCapacity_B2((i+1),:) = axes(i).Children(1).YData; % Heavy
+    SecrecyCapacity_B2((i+2),:) = axes(i).Children(2).YData; % Sparse
+end
+
+    % Start with B1, storing time and then heavy/sparse for each Eve
+SecrecyCapacity_B1(1,:) = axes(9).Children(1).XData; % Time data for B1  
+
+for i = 1:2:8
+    SecrecyCapacity_B1((i+1),:) = axes(i+8).Children(1).YData; % Heavy
+    SecrecyCapacity_B1((i+2),:) = axes(i+8).Children(2).YData; % Sparse
+end
+
+%% 
+for i = 1:4
+    figure(1)
+    subplot(4,2,i)
+    hold on 
+    plot(SecrecyCapacity_B2(1,:), SecrecyCapacity_B2(2*i+1,:));
+    plot(SecrecyCapacity_B2(1,:), SecrecyCapacity_B2(2*i,:));
+    hold off 
+end
+
+for i = 1:4
+    figure(1)
+    subplot(4,2,i+4)
+    hold on 
+    plot(SecrecyCapacity_B1(1,:), SecrecyCapacity_B1(2*i+1,:));
+    plot(SecrecyCapacity_B1(1,:), SecrecyCapacity_B1(2*i,:));
+    hold off 
+end

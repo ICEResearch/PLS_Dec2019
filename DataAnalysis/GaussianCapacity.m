@@ -1,5 +1,5 @@
 clear; close all;
-% addpath ../Data
+addpath ../Data
 load ProcessedResultsFeb2020.mat;
 
 %% User Controlled Variables (Le Magicke Numerals)
@@ -33,11 +33,14 @@ clear new*;
 [capPerCarrier, capPerFrame] = CalculateCapacity(data, snr);
 
 % Capacity Curve Plotting
-namesAlt = ["B_1", "B_1", "B_2", "B_2", "A_1", "A_1", "B_3", "B_3", ...
-    "A_2", "A_2", "B_4", "B_4", "Dropped", "Dropped"]; % Dropped corresponds 
-    % to Angerbauer, we dropped his data from the final paper
-namesAlt = ["Case 1", "Case 1", "Case 2", "Case 2", "Case 3", "Case 3", ...
-            "Case 4", "Case 4", "Case 5", "Case 5", "Case 6", "Case 6"];
+    % This list is just provided for reference
+namesAlt = ["Twitchell", "Twitchell", "Jensen", "Jensen", "Redd", "Redd", ...
+             "Cheng", "Cheng", "Richmond", "Richmond", "Harrison", "Harrison", ...
+             "Angerbauer", "Angerbauer"];
+    % This is the list of names actually used
+namesAlt = ["E1", "E1", "E4", "E4", "B2", "B2", "E2", "E2", "B1", "B1", ...
+            "E3", "E3", "TOSS", "TOSS"];
+
 
 for i = 1:sets
     xAxisTimes(i,:) = seconds(times(i,idxEndOfData(i)) - times(i,:));
