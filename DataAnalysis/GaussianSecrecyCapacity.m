@@ -1,4 +1,9 @@
+%%% Gaussian Secrecy Capacity %%%
+% Used to Generate the Sec. Capacity vs Time and Sec. Capacity Histogram plots
+
 clear; close all;
+
+% This runs the GaussianCapacity value to get necessary variables
 set(0,'DefaultFigureVisible','off'); % Supress figure visibility
 GaussianCapacity; % Run Capacity File
 close all; clear hist* xAxis*; % Gets rid of figures and variables from capacity plots
@@ -8,8 +13,7 @@ set(0,'DefaultFigureVisible','on'); % Return figure visibility
 histBins = 0:50;
 
 %% The Code
-% group1 = ["Redd", "Richmond", "Angerbauer"]; % We decided to throw out
-% Angerbauer's Data
+% Threw out Angerbauer's Data
 group1 = ["Redd", "Richmond"];
 group2 = ["Twitchell", "Jensen", "Cheng", "Harrison"];
 group1alt = ["B2", "B1"];
@@ -24,6 +28,7 @@ for i = 1:sets
     temp(isnan(temp)) = temp(idxEndOfData(i));
     durations(i,:) = temp;
 end
+
 [minDuration, minIdx] = min(durations(:,1)); % Finds the shortest duration
 % Locates the index in each set that matches with the shortest duration
 idxOfMinDuration = zeros(1,sets);
@@ -190,27 +195,11 @@ for bobSelect = 1:length(group1)
         plotIdx = plotIdx + 1;
         axesIdx = axesIdx + 2;
     end
-    
-%     % This can stay commented out, it was only used to save data that Dr Rice
-%     %   wanted access to
-%     for i = 1:sum(eve_idx)
-%         if mod(i,2) % Odd numbers (Empty Case)
-%             c = 'empty';
-%         else % Even Numbers (Traffic Case)
-%             c = 'traffic';
-%         end
-%         eval(['secrecyCapacity_' char(lower(bobName)) ...
-%             '_' char(lower(eveNames(ceil(i/2)))) ...
-%             '_' c ' = secrecyCapacity(i,:);']);
-%     end
-%     timeForXAxis = bobDurations(idxBobMin, bobStartEnd(idxBobMin,1):bobStartEnd(idxBobMin,2));
-%     save(['SecrecyCapacity_' char(lower(bobName)) '.mat'], ...
-%         'secrecyCapacity_*', 'timeForXAxis');
-    
 end
 
+%% Standardize the X/Y Axis limits 
 
-% Set Y/X Limits on all plots to the same values
+%   Sec Cap vs Time 
 ylims = cell2mat(get(axes, 'Ylim'));
 xlims = cell2mat(get(axes, 'Xlim'));
 
@@ -222,7 +211,7 @@ set(axes, 'Xlim', xLimsNew);
 
 set(axes, 'FontSize', 14);
 
-% Set Y/X Limits on all plots to the same values
+%   Repeat for the histograms
 ylims = cell2mat(get(histAxes, 'Ylim'));
 xlims = cell2mat(get(histAxes, 'Xlim'));
 
@@ -262,21 +251,21 @@ for i = 1:2:8
     SecrecyCapacity_B1((i+2),:) = axes(i+8).Children(2).YData; % Sparse
 end
 
-%% 
-for i = 1:4
-    figure(1)
-    subplot(4,2,i)
-    hold on 
-    plot(SecrecyCapacity_B2(1,:), SecrecyCapacity_B2(2*i+1,:));
-    plot(SecrecyCapacity_B2(1,:), SecrecyCapacity_B2(2*i,:));
-    hold off 
-end
-
-for i = 1:4
-    figure(1)
-    subplot(4,2,i+4)
-    hold on 
-    plot(SecrecyCapacity_B1(1,:), SecrecyCapacity_B1(2*i+1,:));
-    plot(SecrecyCapacity_B1(1,:), SecrecyCapacity_B1(2*i,:));
-    hold off 
-end
+%%  Replots the data using only the variables from the previous section 
+% for i = 1:4
+%     figure(1)
+%     subplot(4,2,i)
+%     hold on 
+%     plot(SecrecyCapacity_B2(1,:), SecrecyCapacity_B2(2*i+1,:));
+%     plot(SecrecyCapacity_B2(1,:), SecrecyCapacity_B2(2*i,:));
+%     hold off 
+% end
+% 
+% for i = 1:4
+%     figure(1)
+%     subplot(4,2,i+4)
+%     hold on 
+%     plot(SecrecyCapacity_B1(1,:), SecrecyCapacity_B1(2*i+1,:));
+%     plot(SecrecyCapacity_B1(1,:), SecrecyCapacity_B1(2*i,:));
+%     hold off 
+% end
