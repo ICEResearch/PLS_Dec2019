@@ -5,8 +5,7 @@ as well as information on how to generate them/modify them as needed.
 
 **Cap Vs Time + Cap Hist (Figures X and Y):**  
 - Generated in DataAnalysis > GaussianCapacity  
-- Uses the ProcessedResultsFeb2020.mat file, which is generated in DataProcessing
-> process.m
+- Uses the ProcessedResultsFeb2020.mat file, which is generated in DataProcessing > process.m
 
 **Sec Cap vs Time + Sec Cap Hist (Figures Z & Q):**  
 - Generated in DataAnalysis > GaussianSecrecyCapacity
