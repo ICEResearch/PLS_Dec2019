@@ -1,17 +1,31 @@
-# Data README
+# DataAnalysis README
 
-## Raw Data
-Here is where you should store all of the raw data so that it can be used by the other functions and files in this repository.
-The raw data may be found on Box at 
+This folder contains the scripts used to analyze the data and generate the figures
+used in the paper (with the exception of data processing, which takes in the 
+raw data and outputs data that has been trimmed and PWelched, and is done in 
+DataProcessing >> process.m).
 
-https://byu.app.box.com/folder/103939543408
+## Scripts
+A brief overfiew of the various scripts and their functions is provided here.
 
-## Processed Data
-The raw data was processed in process.m (DataProcessing/process.m) and resulted
-in a .mat file titled "ProcessedResultsFeb2020.mat". Due to size restrictions on Github,
-this .mat file has also been stored on Box. Note that the ProcessedResultsFeb2020.mat
-file is the primary data file used in almost every script.
-
-https://byu.app.box.com/folder/104708439864
-
+- **CalculateCapacity.m:** Function used to calculated capacity. Primarily 
+used inside of GaussianCapacity.m   
+- **CalculateSecrecyCapacity.m:**  Function used to calculate secrecy capacity.
+Primarily used inside of GaussianSecrecyCapacity.m    
+- **GaussianCapacity.m:** Uses data from process.m (ProcessedResultsFeb2020.mat) to generate
+plots of capacity vs time, as well as the associated histograms.    
+- **GaussianSecrecyCapacity.m:** Uses data from CalculateCapacity.m to generate
+plots of secrecy capacity vs time, as well as the associated histograms   
+- **plotHistogram.m:** Generates plots showing histograms of the data in dB
+(not capacity). Not really used for anything other than to validate.    
+- **RMWeightHier.m:** Copied over from the first paper (Physical-layer Security: 
+does it work in a real environment?). Used to calculate the equivocation of 
+a Reed-Muller code.  
+- **ThresholdCapacity:"** Modified from the V2V magazine paper. Evaluates 
+capacity over a number of SNR values, using the threshold method (this is more
+like a binary erasure channel: if the signal is not above a certain threshold,
+it is "indistinguishable" from the noisefloor and counts as an erasure. 
+Otherwise, it has one bit of capacity).
+- **ThresholdSecrecyCapacity.m:** Evaluates secrecy capacity over a number of
+SNR values, using the threshold method mentioned above.  
 
