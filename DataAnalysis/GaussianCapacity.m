@@ -5,6 +5,13 @@ clear; close all;
 addpath ../Data     % Depending on where you store your data, this may throw a warning
 load ProcessedResultsFeb2020.mat; % Generated in process.m
 
+%%%% FOR PLOTTING ONLY THE FIRST 100 Seconds, UNCOMMENT THE FOLLOWING LINES
+for i = 1:14
+    tempTimes(i,:) = milliseconds(times(i,:) - times(i,1));
+    idxEndOfData(i) = min(find(tempTimes(i,:) > 100000));
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% User Controlled Variables (Le Magicke Numerals)
 snr = 10;              % Selected somewhat arbitrarily
 histBins = 0:50;       % Used to standardize the histograms
