@@ -8,15 +8,15 @@ import os
 from datetime import datetime
 
 ######################################################################
-filename = 'LastnameRadionumber'  # e.g., Jensen8
-startTime = "Wed Feb 18 13:30:00 2020"
-endTime = "Wed Feb 18 13:34:00 2020"
+filename = 'LastnameRadionumber_noTraffic'  # e.g., Jensen8
+startTime = "Wed Jun  3 13:30:00 2020"
+endTime = "Wed Jun  3 13:34:00 2020"
 highTraffic = True   # make sure to capitalize this - True / False
 ######################################################################
-if highTraffic:
-    filename = filename + '_traffic'
-else:
-    filename = filename + '_empty'
+# if highTraffic:
+#     filename = filename + '_traffic'
+# else:
+#     filename = filename + '_empty'
 
 
 myFile = open(filename + '.txt', 'w') # Used to save the time stamps

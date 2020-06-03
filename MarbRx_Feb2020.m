@@ -9,19 +9,20 @@
 clear; close all; clc;
 
 %%%%% USER INPUT %%%%%
-startTime = "19-Feb-2020 13:30:00";  % Remember to include the appropriate time offset
-endTime = "19-Feb-2020 13:34:00";  
-arrayName = 'LastnameRadionumber'; % e.g., 'Jensen8'
+startTime = "03-Jun-2020 13:30:00";  % Remember to include the appropriate time offset
+endTime = "03-Jun-2020 13:34:00";  
+arrayName = 'LastnameRadionumber_noTraffic'; % e.g., 'Jensen8'
 highTraffic = false; % all lower case - true / false
 %%%%%%%%%%%%%%%%%%%%%%
-if highTraffic == true
-    arrayName = append(arrayName,'_traffic');
-else
-    arrayName = append(arrayName,'_empty');
-end
+% if highTraffic == true
+%     arrayName = append(arrayName,'_traffic');
+% else
+%     arrayName = append(arrayName,'_empty');
+% end
+
 arraySize = 100e3; % Enough for four mins + extra for safety reasons
 
-dataArray = zeros(arraySize, 2048); % 6400 ~= 1 minute
+dataArray = zeros(arraySize, 2048); 
 timeArray = NaT(1, arraySize);
 
     % Radio setup 
