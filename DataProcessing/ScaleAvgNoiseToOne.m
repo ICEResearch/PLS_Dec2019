@@ -1,6 +1,7 @@
 function scaledData = ScaleAvgNoiseToOne(data, noiseOnOddCarriers)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+    
     [x, y, z] = size(data);
     if z > 1
         numDataSets = x;
@@ -15,9 +16,11 @@ function scaledData = ScaleAvgNoiseToOne(data, noiseOnOddCarriers)
         for j = 1:numFrames
             if numDataSets == 1
                 if noiseOnOddCarriers
-                    noiseAvg = mean(data(1:2:numCarriers,j));
+                    nonzeroData = nonzeros(data(:,j));
+                    noiseAvg = mean(nonzeroData(1:2:end,1));
                 else
-                    noiseAvg = mean(data(2:2:numCarriers,j));
+                    nonzeroData = nonzeros(data(:,j));
+                    noiseAvg = mean(nonzeroData(2:2:end,1));
                 end
                 scaledData(:,j) = data(:,j) ./ noiseAvg;
             else

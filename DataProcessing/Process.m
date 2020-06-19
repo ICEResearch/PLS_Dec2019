@@ -1,4 +1,5 @@
-clear; close all;
+% clear; 
+close all;
 tic;
 
 addpath('../Data/');
@@ -27,12 +28,12 @@ refFileNames = ["Radio1_ref.mat", ...
 idxEndOfData = zeros(1,numFiles);
 Nfft = 128; % Number of FFT bins
 numCarriers = Nfft;
-numFrames = 100000; %FIXME this number is hard coded. Needs to be changed if different data is read in
+numFrames = 40000; %FIXME this number is hard coded. Needs to be changed if different data is read in
 dataSets = zeros(numFiles, numCarriers, numFrames);
 times = NaT(numFiles, numFrames);
-carriersToTrimEachSide = 11; % On EACH side, so 2*this total
+carriersToTrimEachSide = 16; % On EACH side, so 2*this total
 
-for i = 1:numFiles
+for i = 1:numFiles %- cut out the two Angerbauer
     disp('Working on file ' + string(i) + ' at time ' + string(datetime));
     %     tic;
     structContainingData = load(inFileNames(i)); % Load in raw data
@@ -46,7 +47,8 @@ for i = 1:numFiles
     else
         dataArray = dataFromStruct';
     end
-    [rawData, numFrames] = size(dataArray);
+    [rawData, ~] = size(dataArray);
+    
     idxEndOfData(i) = find(sum(dataArray)==0,1) - 1;
     dataTrimmed = dataArray(:,1:idxEndOfData(i));
     
@@ -78,44 +80,48 @@ for i = 1:numFiles
     goodDataAugmented = zeros(numCarriers, numFrames);
     goodDataAugmented(:,1:idxEndOfData(i)) = isolatedGoodData;
     dataSets(i,:,:) = goodDataAugmented;
-    times(i,:) = timeFromStruct;
+    times(i,:) = timeFromStruct(1, 1:numFrames);
 end
 dataSets = dataSets(:,:,1:max(idxEndOfData));
 [~, numCarriers, numFrames] = size(dataSets);
 times = times(:,1:numFrames);
 names = erase(inFileNames, ".mat");
 
-% Finds the common carriers across all the data sets and frames that are
-% good and removes any inconsistent carriers so that the data may be
-% compared appropriately across all of the data sets
-minIdx = min(idxEndOfData); % Number of frames that can be compared across all data sets
-allNonZero = numFiles * minIdx;
-leftCarrier = 0;
-rightCarrier = 0;
+leftCarrier = 2*carriersToTrimEachSide + 1;
+rightCarrier = 128 - (2*carriersToTrimEachSide);
 
-for i = 1:numCarriers
-    if nnz(dataSets(:,i,1:minIdx)) == allNonZero
-        if leftCarrier == 0
-            leftCarrier = i;
-        end
-        rightCarrier = i;
-    end
-end
-goodCarriers = zeros(numCarriers,1);
-if mod(sum(goodCarriers(:,1)),2) ~= 0
-    goodCarriers(leftCarrier:rightCarrier,1) = 1;
-    halfwayCarrier = round(numCarriers / 2);
-    numLeftCarriers = sum(goodCarriers(1:halfwayCarrier,1));
-    numRightCarriers = sum(goodCarriers(halfwayCarrier:numCarriers,1));
-    if numLeftCarriers > numRightCarriers
-        leftCarrier = leftCarrier + 1;
-    else
-        rightCarrier = rightCarrier - 1;
-    end
-end
+% % Finds the common carriers across all the data sets and frames that are
+% % good and removes any inconsistent carriers so that the data may be
+% % compared appropriately across all of the data sets
+% minIdx = min(idxEndOfData); % Number of frames that can be compared across all data sets
+% allNonZero = numFiles * minIdx;
+% leftCarrier = 0;
+% rightCarrier = 0;
+% 
+% for i = 1:numCarriers
+%     if nnz(dataSets(:,i,1:minIdx)) == allNonZero
+%         if leftCarrier == 0
+%             leftCarrier = i;
+%         end
+%         rightCarrier = i;
+%     end
+% end
+% goodCarriers = zeros(numCarriers,1);
+% if mod(sum(goodCarriers(:,1)),2) ~= 0
+%     goodCarriers(leftCarrier:rightCarrier,1) = 1;
+%     halfwayCarrier = round(numCarriers / 2);
+%     numLeftCarriers = sum(goodCarriers(1:halfwayCarrier,1));
+%     numRightCarriers = sum(goodCarriers(halfwayCarrier:numCarriers,1));
+%     if numLeftCarriers > numRightCarriers
+%         leftCarrier = leftCarrier + 1;
+%     else
+%         rightCarrier = rightCarrier - 1;
+%     end
+% end
+% 
+% dataSets(:,1:leftCarrier-1,:) = 0;
+% dataSets(:,rightCarrier+1:numCarriers,:) = 0;
 
-dataSets(:,1:leftCarrier-1,:) = 0;
-dataSets(:,rightCarrier+1:numCarriers,:) = 0;
 
 % Plots one frame of the data showing which carriers were common across all
 % the data sets allowing for visual confirmation for the user
@@ -214,9 +220,3 @@ toc;
 
 % Normalize all the channels by the strongest carrier of all of the
 % channels
-
-%% What we want now
-
-% Histogram of all the carriers, over the entire time (with and without
-% pedestrian traffic) (signal strength and a sum of how many of the carriers
-% over the 30000 frames fit within those bins)
