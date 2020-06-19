@@ -48,5 +48,12 @@ https://byu.app.box.com/folder/103939543408
 during this experiment, and are located in their respective folders
 with ReadMe.md files explaining them more thoroughly.
 
+- Our initial results showed that for two individuals (Redd and Richmond, the 
+closest two) the increased traffic levels *increased* the average capacity somehow,
+which seemed a bit weird. We decided to gather data again in June - 20 seconds
+with the area completely empty (thanks COVID!) and then 30 more seconds with 
+about 5 of us walking around simulating traffic. This data is stored under 
+"ValidationData_June2020" on Box. 
+
 - This data was used for paper XXXXXXXXXX that can be found at YYYYYYYY
 
